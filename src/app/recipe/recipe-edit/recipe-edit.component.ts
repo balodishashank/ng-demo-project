@@ -19,7 +19,13 @@ export class RecipeEditComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
-      this.editMode = params['id'] !== null;
+      const url = this.router.url;
+
+      this.editMode = (
+        typeof params['id'] === 'number' &&
+        params['id'] > -1 ||
+        url.indexOf('edit') > -1) ? true : false;
+
       this.initForm();
     });
   }
@@ -34,6 +40,14 @@ export class RecipeEditComponent implements OnInit {
         ])
       })
     )
+  }
+
+  onDeleteIngredient(index: number) {
+    (<FormArray>this.recipeForm.get('ingredients')).removeAt(index);
+  }
+
+  onDeleteAllIngredients() {
+    (<FormArray>this.recipeForm.get('ingredients')).clear();
   }
 
   onSubmit() {
